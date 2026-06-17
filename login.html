@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="NEO-THREAD: Connect your terminal to access exclusive premium drops.">
+  <title>NEO-THREAD // Member Access</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Core Stylesheet -->
+  <link rel="stylesheet" href="index.css">
+  <script>
+    // Redirect logged-in users directly to index.html
+    if (localStorage.getItem('neo_logged_in_user')) {
+      window.location.href = 'index.html';
+    }
+  </script>
+</head>
+
+<body>
+  <!-- Grid overlay -->
+  <div class="grid-mesh-overlay"></div>
+
+  <div class="auth-wrapper">
+    <div class="auth-card">
+      <div class="auth-logo">
+        NEO-THREAD<span class="version-badge">VOL.01</span>
+      </div>
+      <p class="auth-subtitle">SECURE TERMINAL ACCESS // LEVEL 1</p>
+
+      <!-- Error message bar -->
+      <div class="auth-error-msg" id="error-box">
+        <i data-lucide="alert-triangle" style="width: 18px; height: 18px; flex-shrink: 0;"></i>
+        <span id="error-text"></span>
+      </div>
+
+      <form class="auth-form" id="login-form">
+        <!-- Username/Email/Phone -->
+        <div class="form-group">
+          <label class="form-label" for="login-identity">Email or Phone Number</label>
+          <div class="form-control-wrapper">
+            <input type="text" id="login-identity" class="form-control" placeholder="ENTER E-MAIL OR PHONE..." required autocomplete="username">
+            <i data-lucide="user" class="form-control-icon"></i>
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div class="form-group">
+          <label class="form-label" for="login-password">Password</label>
+          <div class="form-control-wrapper">
+            <input type="password" id="login-password" class="form-control" placeholder="ENTER SECURE PASSCODE..." required autocomplete="current-password">
+            <i data-lucide="lock" class="form-control-icon"></i>
+          </div>
+        </div>
+
+        <!-- Submit button -->
+        <button type="submit" class="btn-auth-submit" id="submit-btn">
+          <span>CONNECT TERMINAL</span>
+          <i data-lucide="log-in" style="width: 18px; height: 18px;"></i>
+        </button>
+      </form>
+
+      <div class="auth-footer">
+        <p>New to the streets? <a href="signup.html" class="auth-link">SIGN UP HERE</a></p>
+      </div>
+
+      <div class="auth-info-note">
+        <strong>Demo Credentials Seeding:</strong><br>
+        Email: <code>shiv@neothread.com</code> &nbsp;|&nbsp; Password: <code>password123</code>
+      </div>
+    </div>
+  </div>
+
+  <script src="login.js"></script>
+</body>
+
+</html>

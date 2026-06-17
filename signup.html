@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="NEO-THREAD: Register your member profile for exclusive premium drops.">
+  <title>NEO-THREAD // Register Profile</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Core Stylesheet -->
+  <link rel="stylesheet" href="index.css">
+  <script>
+    // Redirect logged-in users directly to index.html
+    if (localStorage.getItem('neo_logged_in_user')) {
+      window.location.href = 'index.html';
+    }
+  </script>
+</head>
+
+<body>
+  <!-- Grid overlay -->
+  <div class="grid-mesh-overlay"></div>
+
+  <div class="auth-wrapper" style="padding: 40px 24px;">
+    <div class="auth-card" style="max-width: 540px;">
+      <div class="auth-logo">
+        NEO-THREAD<span class="version-badge">VOL.01</span>
+      </div>
+      <p class="auth-subtitle">CREATE NEW MEMBER PROFILE // LEVEL 1</p>
+
+      <!-- Error message bar -->
+      <div class="auth-error-msg" id="error-box">
+        <i data-lucide="alert-triangle" style="width: 18px; height: 18px; flex-shrink: 0;"></i>
+        <span id="error-text"></span>
+      </div>
+
+      <form class="auth-form" id="signup-form">
+        <!-- Full Name -->
+        <div class="form-group">
+          <label class="form-label" for="signup-name">Full Name</label>
+          <div class="form-control-wrapper">
+            <input type="text" id="signup-name" class="form-control" placeholder="ENTER YOUR FULL NAME..." required autocomplete="name">
+            <i data-lucide="user" class="form-control-icon"></i>
+          </div>
+        </div>
+
+        <!-- Responsive form row for Email and Phone -->
+        <div class="form-row">
+          <!-- Email Address -->
+          <div class="form-group">
+            <label class="form-label" for="signup-email">Email Address</label>
+            <div class="form-control-wrapper">
+              <input type="email" id="signup-email" class="form-control" placeholder="EMAIL ADDRESS..." required autocomplete="email">
+              <i data-lucide="mail" class="form-control-icon"></i>
+            </div>
+          </div>
+
+          <!-- Phone Number -->
+          <div class="form-group">
+            <label class="form-label" for="signup-phone">Phone Number</label>
+            <div class="form-control-wrapper">
+              <input type="tel" id="signup-phone" class="form-control" placeholder="10-DIGIT MOBILE..." required autocomplete="tel" pattern="[0-9]{10}">
+              <i data-lucide="phone" class="form-control-icon"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Address -->
+        <div class="form-group">
+          <label class="form-label" for="signup-address">Delivery Address</label>
+          <div class="form-control-wrapper">
+            <input type="text" id="signup-address" class="form-control" placeholder="STREET, BUILDING, SECTOR/AREA..." required autocomplete="street-address">
+            <i data-lucide="map-pin" class="form-control-icon"></i>
+          </div>
+        </div>
+
+        <!-- Responsive form row for Pincode and Password -->
+        <div class="form-row">
+          <!-- Pincode -->
+          <div class="form-group">
+            <label class="form-label" for="signup-pincode">Pincode</label>
+            <div class="form-control-wrapper">
+              <input type="text" id="signup-pincode" class="form-control" placeholder="6-DIGIT PIN..." required autocomplete="postal-code" pattern="[0-9]{6}">
+              <i data-lucide="hash" class="form-control-icon"></i>
+            </div>
+          </div>
+
+          <!-- Password -->
+          <div class="form-group">
+            <label class="form-label" for="signup-password">Password (Min 6 chars)</label>
+            <div class="form-control-wrapper">
+              <input type="password" id="signup-password" class="form-control" placeholder="SECURE PASSCODE..." required autocomplete="new-password" minlength="6">
+              <i data-lucide="lock" class="form-control-icon"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Submit button -->
+        <button type="submit" class="btn-auth-submit" id="submit-btn">
+          <span>CREATE ACCOUNT</span>
+          <i data-lucide="user-plus" style="width: 18px; height: 18px;"></i>
+        </button>
+      </form>
+
+      <div class="auth-footer">
+        <p>Already have an account? <a href="login.html" class="auth-link">LOGIN HERE</a></p>
+      </div>
+    </div>
+  </div>
+
+  <script src="signup.js"></script>
+</body>
+
+</html>
