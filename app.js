@@ -691,6 +691,63 @@ function attachWishlistEvents() {
   });
 }
 
+// Dynamic Profile Updates for Account Drawer
+function updateAccountDrawerDetails() {
+  const loggedInUser = JSON.parse(localStorage.getItem('neo_logged_in_user'));
+  if (loggedInUser) {
+    // Update username
+    const usernameEl = document.querySelector('.profile-details .username');
+    if (usernameEl) {
+      usernameEl.innerText = loggedInUser.name.toUpperCase().replace(/\s+/g, '_');
+    }
+    
+    // Update email
+    const emailEl = document.getElementById('user-display-email');
+    if (emailEl) {
+      emailEl.innerText = loggedInUser.email;
+    }
+  }
+
+  // Read saved userProfile
+  const savedProfile = JSON.parse(localStorage.getItem('userProfile'));
+  if (savedProfile) {
+    // Update name if saved in profile
+    const usernameEl = document.querySelector('.profile-details .username');
+    if (usernameEl && savedProfile.fullName) {
+      usernameEl.innerText = savedProfile.fullName.toUpperCase().replace(/\s+/g, '_');
+    }
+
+    // Update phone
+    const phoneEl = document.getElementById('user-display-phone');
+    if (phoneEl) {
+      phoneEl.innerText = savedProfile.phone;
+    }
+    
+    // Update address
+    const addressEl = document.getElementById('user-display-address');
+    if (addressEl) {
+      const addr1 = savedProfile.addressLine1 || '';
+      const addr2 = savedProfile.addressLine2 ? `, ${savedProfile.addressLine2}` : '';
+      const city = savedProfile.city ? `, ${savedProfile.city}` : '';
+      const state = savedProfile.state ? `, ${savedProfile.state}` : '';
+      const pincode = savedProfile.pincode ? `, Pin: ${savedProfile.pincode}` : '';
+      addressEl.innerText = `${addr1}${addr2}${city}${state}${pincode}`;
+    }
+  } else if (loggedInUser) {
+    // Fallback to logged-in user info
+    const phoneEl = document.getElementById('user-display-phone');
+    if (phoneEl) {
+      phoneEl.innerText = loggedInUser.phone;
+    }
+    const addressEl = document.getElementById('user-display-address');
+    if (addressEl) {
+      const pinStr = loggedInUser.pincode ? `, Pin: ${loggedInUser.pincode}` : '';
+      const addr = loggedInUser.address || '';
+      addressEl.innerText = `${addr}${pinStr}`;
+    }
+  }
+}
+
 // Core setup and binding
 function initApp() {
   // Category route binding
@@ -790,6 +847,7 @@ function initApp() {
   }
 
   // Initial runs
+  updateAccountDrawerDetails();
   renderCatalog();
   renderCart();
   renderWishlist();

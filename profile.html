@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="NEO-THREAD: Configure your shipping terminal details and access premium streetwear collections.">
+  <title>NEO-THREAD // Profile Settings</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap"
+    rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Core Stylesheet -->
+  <link rel="stylesheet" href="index.css">
+  <script>
+    // Inline Auth Guard: Redirect to login.html if not authenticated
+    if (!localStorage.getItem('neo_logged_in_user')) {
+      window.location.href = 'login.html';
+    }
+  </script>
+</head>
+
+<body>
+  <!-- Grid Mesh Overlay -->
+  <div class="grid-mesh-overlay"></div>
+
+  <!-- Header Navigation -->
+  <header class="main-header">
+    <div class="header-container">
+      <!-- Logo Brand -->
+      <a href="index.html" class="brand-logo">
+        NEO-THREAD<span class="version-badge">VOL.01</span>
+      </a>
+
+      <!-- Back button -->
+      <a href="index.html" class="btn btn-secondary" style="padding: 8px 16px; font-size: 0.8rem; height: 38px; border-color: var(--border-color); color: var(--text-primary); text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+        <i data-lucide="arrow-left" style="width: 14px; height: 14px;"></i>
+        <span>RETURN TO STREETS</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Main Body Content -->
+  <main class="main-content" style="display: flex; justify-content: center; align-items: center; padding: 40px 0;">
+    <div class="auth-card" style="max-width: 600px; width: 100%; box-shadow: 10px 10px 0px rgba(96, 170, 204, 0.1);">
+      <div class="auth-logo" style="font-size: 1.8rem; letter-spacing: -1px;">
+        PROFILE TERMINAL
+      </div>
+      <p class="auth-subtitle">SHIPPING & CONTACT CONFIGURATION</p>
+
+      <!-- Error message bar -->
+      <div class="auth-error-msg" id="error-box">
+        <i data-lucide="alert-triangle" style="width: 18px; height: 18px; flex-shrink: 0;"></i>
+        <span id="error-text"></span>
+      </div>
+
+      <!-- Success message bar -->
+      <div class="auth-error-msg" id="success-box" style="background-color: rgba(96, 170, 204, 0.1); border-color: var(--accent-lime); color: var(--accent-lime);">
+        <i data-lucide="check-circle" style="width: 18px; height: 18px; flex-shrink: 0;"></i>
+        <span id="success-text">SHIPPING TERMINAL CONFIGURATION SAVED SUCCESSFULLY.</span>
+      </div>
+
+      <form class="auth-form" id="profile-form">
+        <!-- Full Name -->
+        <div class="form-group">
+          <label class="form-label" for="profile-name">Full Name</label>
+          <div class="form-control-wrapper">
+            <input type="text" id="profile-name" class="form-control" placeholder="ENTER FULL NAME..." required>
+            <i data-lucide="user" class="form-control-icon"></i>
+          </div>
+        </div>
+
+        <!-- Phone Number -->
+        <div class="form-group">
+          <label class="form-label" for="profile-phone">Phone Number</label>
+          <div class="form-control-wrapper">
+            <input type="tel" id="profile-phone" class="form-control" placeholder="ENTER 10-DIGIT PHONE..." required>
+            <i data-lucide="phone" class="form-control-icon"></i>
+          </div>
+        </div>
+
+        <!-- Address Line 1 -->
+        <div class="form-group">
+          <label class="form-label" for="profile-address1">Address Line 1</label>
+          <div class="form-control-wrapper">
+            <input type="text" id="profile-address1" class="form-control" placeholder="STREET ADDRESS, APARTMENT, FLAT, HOUSE NO..." required>
+            <i data-lucide="map-pin" class="form-control-icon"></i>
+          </div>
+        </div>
+
+        <!-- Address Line 2 -->
+        <div class="form-group">
+          <label class="form-label" for="profile-address2">Address Line 2 (Optional)</label>
+          <div class="form-control-wrapper">
+            <input type="text" id="profile-address2" class="form-control" placeholder="LANDMARK, SUITE, UNIT, SECTOR...">
+            <i data-lucide="map-pin" class="form-control-icon"></i>
+          </div>
+        </div>
+
+        <!-- City & State -->
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="profile-city">City</label>
+            <div class="form-control-wrapper">
+              <input type="text" id="profile-city" class="form-control" placeholder="CITY..." required>
+              <i data-lucide="building" class="form-control-icon"></i>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="profile-state">State</label>
+            <div class="form-control-wrapper">
+              <input type="text" id="profile-state" class="form-control" placeholder="STATE..." required>
+              <i data-lucide="map" class="form-control-icon"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pincode -->
+        <div class="form-group">
+          <label class="form-label" for="profile-pincode">Pincode</label>
+          <div class="form-control-wrapper">
+            <input type="text" id="profile-pincode" class="form-control" placeholder="6-DIGIT PINCODE..." required>
+            <i data-lucide="hash" class="form-control-icon"></i>
+          </div>
+        </div>
+
+        <!-- Submit button -->
+        <button type="submit" class="btn-auth-submit" id="submit-btn" style="margin-top: 10px;">
+          <span>SAVE TERMINAL CONFIG</span>
+          <i data-lucide="save" style="width: 18px; height: 18px;"></i>
+        </button>
+
+        <a href="index.html" class="btn btn-secondary" style="width: 100%; border-color: var(--border-color); color: var(--text-primary); text-align: center; display: inline-flex; justify-content: center; align-items: center; gap: 8px;">
+          <i data-lucide="arrow-left" style="width: 16px; height: 16px;"></i>
+          <span>RETURN TO HOMEPAGE</span>
+        </a>
+      </form>
+    </div>
+  </main>
+
+  <!-- Foot-note / Info Section -->
+  <footer class="main-footer" style="margin-top: 50px;">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <h3>NEO-THREAD // 01</h3>
+        <p>Premium streetwear label blending digital cyberpunk art with raw industrial garments.</p>
+      </div>
+      <div class="footer-links">
+        <div class="footer-column">
+          <h4>COLLECTIONS</h4>
+          <a href="index.html">Men's Drops</a>
+          <a href="index.html">Women's Drops</a>
+          <a href="index.html">All Releases</a>
+        </div>
+        <div class="footer-column">
+          <h4>COMMUNITY</h4>
+          <a href="#">Join Discord</a>
+          <a href="#">Instagram</a>
+          <a href="#">Editorial</a>
+        </div>
+        <div class="footer-column">
+          <h4>SUPPORT</h4>
+          <a href="#">Shipping Info</a>
+          <a href="#">Size Guides</a>
+          <a href="#">Contact Support</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 NEO-THREAD SYSTEM INC. ALL RIGHTS RESERVED.</p>
+      <p>DESIGNED FOR STREETWEAR REBELS.</p>
+    </div>
+  </footer>
+
+  <script src="profile.js"></script>
+</body>
+
+</html>
