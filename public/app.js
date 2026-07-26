@@ -1,125 +1,167 @@
 // NEO-THREAD // STREETWEAR E-COMMERCE APPLICATION ENGINE
 
 // 1. PRODUCT DATABASE
-const PRODUCTS = [
-  {
-    id: 'm1',
-    name: 'CYBERPUNK ONI TEE',
-    category: 'MENS',
-    price: 479,
-    image: 'men_cyberpunk_oni.png',
-    description: 'Oversized heavyweight black tee with high-definition neon cyber oni mask graphic. Premium drop-shoulder boxy fit.',
-    sizes: ['S', 'M', 'L', 'XL']
-  },
-  {
-    id: 'm2',
-    name: 'TOKYO GRAFFITI TEE',
-    category: 'MENS',
-    price: 459,
-    image: 'men_tokyo_graffiti.png',
-    description: 'Relaxed-fit midnight black tee featuring vibrant acid green and white custom wildstyle graffiti chest block print.',
-    sizes: ['S', 'M', 'L', 'XL']
-  },
-  {
-    id: 'm3',
-    name: 'MIDNIGHT VANDAL TEE',
-    category: 'MENS',
-    price: 499,
-    image: 'men_midnight_vandal.png',
-    description: 'Vintage mineral washed charcoal heavy tee with distressed white spray stencil graphics and raw edge finishes.',
-    sizes: ['S', 'M', 'L', 'XL']
-  },
-  {
-    id: 'm4',
-    name: 'CHAMPIONS EDITION RCB JERSEY',
-    category: 'MENS',
-    price: 489,
-    image: 'men_rcb_jersey.jpeg',
-    description: 'Premium fan-edition black and slate grey striped jersey with gold piping and official crest detailing. Lightweight performance knit.',
-    sizes: ['S', 'M', 'L', 'XL']
-  },
-  {
-    id: 'm5',
-    name: 'TENNIS CLUB GRAPHIC TEE',
-    category: 'MENS',
-    price: 469,
-    image: 'men_tennis_club.jpeg',
-    description: 'A pastel sky blue classic fit tee featuring a custom "One More Point" graphic illustration. Comfortable everyday wear.',
-    sizes: ['S', 'M', 'L', 'XL']
-  },
-  {
-    id: 'm6',
-    name: 'LOVE THE GAME COURT TEE',
-    category: 'MENS',
-    price: 499,
-    image: 'men_love_game.jpeg',
-    description: 'Heavyweight matte black tee showcasing a striking pink graphic of a tennis player in motion with clean typographic styling.',
-    sizes: ['S', 'M', 'L', 'XL']
-  },
-  {
-    id: 'w1',
-    name: 'HARAJUKU BUTTERFLY CROP',
-    category: 'WOMENS',
-    price: 469,
-    image: 'women_harajuku_butterfly.png',
-    description: 'Gothic black crop baby tee featuring detailed metallic cyber-butterfly wings and hot violet flame prints.',
-    sizes: ['XS', 'S', 'M', 'L']
-  },
-  {
-    id: 'w2',
-    name: 'ACID GRID BABY TEE',
-    category: 'WOMENS',
-    price: 489,
-    image: 'women_acid_grid.png',
-    description: 'Slim fit ribbed baby tee in deep black with custom neon toxic-green digital cyber matrix-grid artwork.',
-    sizes: ['XS', 'S', 'M', 'L']
-  },
-  {
-    id: 'w3',
-    name: 'SYNTHWAVE SIREN TEE',
-    category: 'WOMENS',
-    price: 479,
-    image: 'women_synthwave_siren.png',
-    description: 'Oversized crisp white drop-shoulder tee with a gorgeous neon violet and cyan retro anime cyber-siren graphic.',
-    sizes: ['S', 'M', 'L', 'XL']
-  },
-  {
-    id: 'w4',
-    name: 'RETRO SKY BUBBLE TEE',
-    category: 'WOMENS',
-    price: 459,
-    image: 'women_retro_sky.jpeg',
-    description: 'Pastel light blue oversized tee featuring a vintage 70s-inspired bubbly white typography design. Extremely soft and relaxed.',
-    sizes: ['XS', 'S', 'M', 'L']
-  },
-  {
-    id: 'w5',
-    name: 'VARSITY 99 KNIT SWEATER',
-    category: 'WOMENS',
-    price: 499,
-    image: 'women_varsity_99.jpeg',
-    description: 'Premium heavy knit cream cable sweater featuring a classic ribbed v-neck, collegiate striped trim, and a bold 99 varsity chest print.',
-    sizes: ['S', 'M', 'L']
-  },
-  {
-    id: 'w6',
-    name: 'NEW YORK ARCH TEE',
-    category: 'WOMENS',
-    price: 479,
-    image: 'women_new_york.jpeg',
-    description: 'Deep chocolate brown oversized tee featuring a bold vintage arched New York chest print. Perfect streetwear basic.',
-    sizes: ['S', 'M', 'L', 'XL']
-  }
-];
+let PRODUCTS = [];
 
 // 2. STATE MANAGER
 let state = {
   currentCategory: 'ALL', // 'ALL', 'MENS', 'WOMENS'
   searchQuery: '',
-  cart: JSON.parse(localStorage.getItem('neo_cart')) || [],
-  wishlist: JSON.parse(localStorage.getItem('neo_wishlist')) || [],
+  cart: [],
+  wishlist: [],
   selectedSizes: {} // Maps productID -> size selected in grid
 };
+
+// 2b. SERVER SYNCHRONIZERS
+async function syncCartWithServer() {
+  try {
+    const token = localStorage.getItem('neo_token');
+    if (!token) return;
+    await fetch('/api/cart', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ cart: state.cart })
+    });
+  } catch (err) {
+    console.error("Failed to sync cart with server:", err);
+  }
+}
+
+async function syncWishlistWithServer() {
+  try {
+    const token = localStorage.getItem('neo_token');
+    if (!token) return;
+    await fetch('/api/wishlist', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ wishlist: state.wishlist })
+    });
+  } catch (err) {
+    console.error("Failed to sync wishlist with server:", err);
+  }
+}
+
+async function loadServerData() {
+  const token = localStorage.getItem('neo_token');
+  if (!token) {
+    window.location.href = 'login.html';
+    return;
+  }
+
+  // 1. Verify User Session & Get Fresh User Details
+  try {
+    const authRes = await fetch('/api/auth/me', {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (!authRes.ok) {
+      localStorage.removeItem('neo_token');
+      localStorage.removeItem('neo_logged_in_user');
+      window.location.href = 'login.html';
+      return;
+    }
+    const freshUserObj = await authRes.json();
+    localStorage.setItem('neo_logged_in_user', JSON.stringify(freshUserObj));
+    updateAccountDrawerDetails();
+  } catch (err) {
+    console.error("Session verification failure:", err);
+  }
+
+  // 2. Fetch Dynamic Catalog Products
+  try {
+    const prodRes = await fetch('/api/products');
+    PRODUCTS = await prodRes.json();
+  } catch (err) {
+    console.error("Failed to load catalog products:", err);
+  }
+
+  // 3. Fetch Persistent Cart from Server
+  try {
+    const cartRes = await fetch('/api/cart', {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (cartRes.ok) {
+      state.cart = await cartRes.json();
+      localStorage.setItem('neo_cart', JSON.stringify(state.cart));
+    }
+  } catch (err) {
+    console.error("Failed to load user cart:", err);
+  }
+
+  // 4. Fetch Persistent Wishlist from Server
+  try {
+    const wishlistRes = await fetch('/api/wishlist', {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (wishlistRes.ok) {
+      state.wishlist = await wishlistRes.json();
+      localStorage.setItem('neo_wishlist', JSON.stringify(state.wishlist));
+    }
+  } catch (err) {
+    console.error("Failed to load user wishlist:", err);
+  }
+
+  // 5. Fetch Order History
+  await loadOrderHistory();
+
+  // 6. Initial render pass
+  renderCatalog();
+  renderCart();
+  renderWishlist();
+}
+
+async function loadOrderHistory() {
+  try {
+    const token = localStorage.getItem('neo_token');
+    if (!token) return;
+
+    const res = await fetch('/api/orders', {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (res.ok) {
+      const orders = await res.json();
+      renderOrdersList(orders);
+    }
+  } catch (err) {
+    console.error("Failed to load order history from server:", err);
+  }
+}
+
+function renderOrdersList(orders) {
+  const container = document.querySelector('.orders-list');
+  if (!container) return;
+
+  if (orders.length === 0) {
+    container.innerHTML = `
+      <div style="text-align: center; padding: 20px 0; color: var(--text-secondary); font-size: 0.85rem;">
+        NO TRANSACTION RECORDS FOUND
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = orders.map(order => {
+    const statusClass = order.status.toLowerCase().replace(/\s+/g, '-');
+    return `
+      <div class="order-item">
+        <div class="order-meta">
+          <span class="order-id">${order.id}</span>
+          <span class="order-date">${order.date}</span>
+        </div>
+        <div class="order-summary" style="font-size: 0.75rem; color: var(--text-primary); margin: 6px 0;">${order.summary}</div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
+          <span style="font-size: 0.8rem; font-weight: bold; color: var(--accent-lime);">₹${order.subtotal.toLocaleString('en-IN')}</span>
+          <span class="order-status-badge ${statusClass}">${order.status}</span>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
 
 // 3. DOM ELEMENTS
 const DOM = {
@@ -181,6 +223,8 @@ const DOM = {
 function saveStateToStorage() {
   localStorage.setItem('neo_cart', JSON.stringify(state.cart));
   localStorage.setItem('neo_wishlist', JSON.stringify(state.wishlist));
+  syncCartWithServer();
+  syncWishlistWithServer();
 }
 
 // 5. RENDERING PIPELINE
@@ -706,44 +750,28 @@ function updateAccountDrawerDetails() {
     if (emailEl) {
       emailEl.innerText = loggedInUser.email;
     }
-  }
-
-  // Read saved userProfile
-  const savedProfile = JSON.parse(localStorage.getItem('userProfile'));
-  if (savedProfile) {
-    // Update name if saved in profile
-    const usernameEl = document.querySelector('.profile-details .username');
-    if (usernameEl && savedProfile.fullName) {
-      usernameEl.innerText = savedProfile.fullName.toUpperCase().replace(/\s+/g, '_');
-    }
 
     // Update phone
     const phoneEl = document.getElementById('user-display-phone');
     if (phoneEl) {
-      phoneEl.innerText = savedProfile.phone;
+      phoneEl.innerText = loggedInUser.phone || '';
     }
-    
+
     // Update address
     const addressEl = document.getElementById('user-display-address');
     if (addressEl) {
-      const addr1 = savedProfile.addressLine1 || '';
-      const addr2 = savedProfile.addressLine2 ? `, ${savedProfile.addressLine2}` : '';
-      const city = savedProfile.city ? `, ${savedProfile.city}` : '';
-      const state = savedProfile.state ? `, ${savedProfile.state}` : '';
-      const pincode = savedProfile.pincode ? `, Pin: ${savedProfile.pincode}` : '';
-      addressEl.innerText = `${addr1}${addr2}${city}${state}${pincode}`;
-    }
-  } else if (loggedInUser) {
-    // Fallback to logged-in user info
-    const phoneEl = document.getElementById('user-display-phone');
-    if (phoneEl) {
-      phoneEl.innerText = loggedInUser.phone;
-    }
-    const addressEl = document.getElementById('user-display-address');
-    if (addressEl) {
-      const pinStr = loggedInUser.pincode ? `, Pin: ${loggedInUser.pincode}` : '';
-      const addr = loggedInUser.address || '';
-      addressEl.innerText = `${addr}${pinStr}`;
+      if (loggedInUser.addressLine1) {
+        const addr1 = loggedInUser.addressLine1;
+        const addr2 = loggedInUser.addressLine2 ? `, ${loggedInUser.addressLine2}` : '';
+        const city = loggedInUser.city ? `, ${loggedInUser.city}` : '';
+        const state = loggedInUser.state ? `, ${loggedInUser.state}` : '';
+        const pincode = loggedInUser.pincode ? `, Pin: ${loggedInUser.pincode}` : '';
+        addressEl.innerText = `${addr1}${addr2}${city}${state}${pincode}`;
+      } else {
+        const pinStr = loggedInUser.pincode ? `, Pin: ${loggedInUser.pincode}` : '';
+        const addr = loggedInUser.address || '';
+        addressEl.innerText = `${addr}${pinStr}`;
+      }
     }
   }
 }
@@ -799,32 +827,73 @@ function initApp() {
     if (e.key === 'Escape') closeAllDrawers();
   });
 
-  // Simulated Checkout trigger
-  DOM.checkoutBtn.addEventListener('click', () => {
-    closeAllDrawers();
-    // Reset Cart
-    state.cart = [];
-    saveStateToStorage();
-    renderCart();
+  // Real Checkout trigger
+  DOM.checkoutBtn.addEventListener('click', async () => {
+    if (state.cart.length === 0) return;
+    
+    const subtotal = state.cart.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
+    const cartItemsCopy = [...state.cart];
 
-    // Open Success Modal
-    DOM.checkoutModal.classList.add('active');
+    try {
+      const token = localStorage.getItem('neo_token');
+      const res = await fetch('/api/orders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          items: cartItemsCopy,
+          subtotal: subtotal
+        })
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        closeAllDrawers();
+        
+        // Update Modal details dynamically
+        const modalContainer = DOM.checkoutModal.querySelector('.modal-container');
+        if (modalContainer) {
+          const detailRows = modalContainer.querySelectorAll('.modal-details div');
+          if (detailRows.length >= 2) {
+            detailRows[0].innerHTML = `<strong>Transaction ID:</strong> ${data.txnId}`;
+            detailRows[1].innerHTML = `<strong>Status:</strong> ${data.order.status}`;
+          }
+        }
+
+        // Reset Cart state
+        state.cart = [];
+        localStorage.setItem('neo_cart', JSON.stringify([]));
+        
+        renderCart();
+        loadOrderHistory();
+
+        // Open Success Modal
+        DOM.checkoutModal.classList.add('active');
+      } else {
+        alert(data.error || "Checkout failed");
+      }
+    } catch (err) {
+      console.error("Checkout Error:", err);
+      alert("Failed to submit checkout reservation: Server connection lost.");
+    }
   });
 
   DOM.closeCheckoutModalBtn.addEventListener('click', () => {
     DOM.checkoutModal.classList.remove('active');
   });
 
-  // Account logout warning demo
+  // Account logout
   document.getElementById('logout-btn').addEventListener('click', () => {
-    alert('Simulating disconnect: Clear local storage? All items in cart and wishlist will reset.');
-    state.cart = [];
-    state.wishlist = [];
-    saveStateToStorage();
-    renderCart();
-    renderWishlist();
-    renderCatalog();
-    closeAllDrawers();
+    if (confirm('Disconnect terminal session? Local authentication cache will be cleared.')) {
+      localStorage.removeItem('neo_token');
+      localStorage.removeItem('neo_logged_in_user');
+      localStorage.removeItem('neo_cart');
+      localStorage.removeItem('neo_wishlist');
+      window.location.href = 'login.html';
+    }
   });
 
   // 3D tilt for hero card
@@ -846,17 +915,14 @@ function initApp() {
     });
   }
 
-  // Initial runs
-  updateAccountDrawerDetails();
-  renderCatalog();
-  renderCart();
-  renderWishlist();
-
   // Render lucide icons for elements loaded by the core index.html shell
   lucide.createIcons();
 }
 
 // Initialise application on load
-window.addEventListener('DOMContentLoaded', initApp);
+window.addEventListener('DOMContentLoaded', () => {
+  initApp();
+  loadServerData();
+});
 
 
